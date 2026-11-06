@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRM Parquímetros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1222; --card:#111a2e; --card2:#0e1628; --line:#1e2a44; --ink:#e6ebf5; --muted:#8a97b2;
+  --amber:#f5a623; --amber-soft:rgba(245,166,35,.14); --green:#22c55e; --red:#ef4444; --purple:#a855f7; --blue:#3b82f6; --brown:#b7791f;
+  --body:"Inter", system-ui, "Segoe UI", sans-serif; --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.45 var(--body)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.hide{display:none!important}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:16px}
+.lcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px;width:min(390px,100%);display:grid;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.logo{display:flex;gap:10px;align-items:center}
+.logo .ic{width:40px;height:40px;border-radius:10px;background:var(--amber);display:grid;place-items:center;color:#1a1200;flex:none}
+.logo b{display:block;font-size:16px}
+.logo small{color:var(--muted);font-size:12px}
+.foot{color:var(--muted);font-size:11px;text-align:center}
+
+/* layout */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+aside.side{background:var(--card2);border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:16px;position:sticky;top:0;height:100vh}
+.ucard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+.ucard .av{width:34px;height:34px;border-radius:50%;background:var(--amber-soft);color:var(--amber);display:grid;place-items:center;font-weight:700}
+.ucard small{color:var(--muted);display:block;font-size:11px;text-transform:capitalize}
+nav{display:grid;gap:2px}
+nav button{display:flex;gap:10px;align-items:center;border:0;background:transparent;color:var(--muted);padding:9px 10px;border-radius:9px;text-align:left;font-weight:500}
+nav button:hover{background:var(--card);color:var(--ink)}
+nav button.on{background:var(--amber);color:#1a1200}
+nav svg{width:18px;height:18px;flex:none}
+.side .sp{flex:1}
+main{padding:18px 22px 40px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.top h1{margin:0;font-size:22px}
+.top .when{color:var(--muted);font-size:13px}
+.top .r{display:flex;gap:10px;align-items:center}
+.clock{font:500 15px var(--mono);background:var(--card);border:1px solid var(--line);border-radius:9px;padding:6px 10px}
+.burger{display:none}
+
+/* ui */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{margin:0 0 12px;font-size:15px}
+.grid{display:grid;gap:14px}
+.k4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{display:grid;gap:4px}
+.kpi small{color:var(--muted);font-size:12px}
+.kpi .n{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi .n.a{color:var(--amber)}
+.kpi .d{color:var(--muted);font-size:12px}
+.g2{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+.g2e{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-weight:600;font-size:13px}
+.btn:hover{border-color:var(--amber)}
+.btn.p{background:var(--amber);border-color:var(--amber);color:#1a1200}
+.btn.danger{color:var(--red)}
+.btn.sm{padding:4px 8px;font-size:12px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.f{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:9px 11px;width:100%}
+label.l{display:grid;gap:5px;font-size:12px;color:var(--muted)}
+.form{display:grid;gap:12px}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.banner{border-radius:10px;padding:10px 12px;font-size:13px;display:flex;gap:8px;align-items:center}
+.banner.ok{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.3)}
+.banner.bad{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+.banner.info{background:var(--amber-soft);color:#fcd38a;border:1px solid rgba(245,166,35,.3)}
+table.t{width:100%;border-collapse:collapse}
+table.t th{text-align:left;color:var(--muted);font-weight:500;font-size:12px;padding:8px;border-bottom:1px solid var(--line)}
+table.t td{padding:9px 8px;border-bottom:1px solid var(--line)}
+table.t tr.click{cursor:pointer}
+table.t tr.click:hover td{background:rgba(255,255,255,.03)}
+.r{text-align:right}
+.pill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap;display:inline-block}
+.t-auto{background:rgba(59,130,246,.15);color:#93c5fd}.t-moto{background:rgba(34,197,94,.15);color:#86efac}.t-vip{background:rgba(168,85,247,.15);color:#d8b4fe}.t-discapacitado{background:rgba(183,121,31,.2);color:#fbd38d}
+.ok-p{background:rgba(34,197,94,.15);color:#86efac}.bad-p{background:rgba(239,68,68,.15);color:#fca5a5}.mut-p{background:var(--line);color:var(--muted)}
+.prog{height:10px;border-radius:99px;background:var(--line);overflow:hidden;display:flex}
+.prog i{display:block;height:100%}
+.lrow{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);align-items:center}
+.lrow:last-child{border-bottom:0}
+.big{font-size:40px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums}
+.methods{display:flex;gap:8px;flex-wrap:wrap}
+.methods button{flex:1;min-width:90px}
+.methods button.on{background:var(--amber);color:#1a1200;border-color:var(--amber)}
+.zone{display:grid;gap:8px}
+.zone h3{margin:6px 0 0;font-size:13px;color:var(--muted);font-weight:600}
+.cells{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:6px}
+.cell{border-radius:9px;padding:7px 6px;border:1px solid var(--line);font-size:11px;text-align:center;background:var(--card2);cursor:pointer;min-height:52px;display:grid;align-content:center;gap:2px}
+.cell b{font:500 12px var(--mono)}
+.cell.libre{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.08)}
+.cell.ocupado{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.12)}
+.cell.mantenimiento{border-color:var(--line);background:repeating-linear-gradient(135deg,#1e2a44 0 6px,transparent 6px 12px);color:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:90;max-width:92vw;font-weight:500}
+.toast.show{opacity:1}
+.toast.err{background:var(--red);color:#fff}
+.modal{position:fixed;inset:0;background:rgba(3,6,14,.65);display:grid;place-items:center;z-index:60;padding:16px;overflow:auto}
+.modal .card{width:min(440px,100%)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);background:var(--card);border-left:1px solid var(--line);z-index:61;overflow:auto;padding:18px;display:grid;gap:12px;align-content:start}
+.ticket{background:#fff;color:#111;border-radius:6px;padding:14px;font:12px/1.5 var(--mono);width:280px;margin:0 auto}
+.ticket h3{text-align:center;margin:0 0 6px;font-size:14px}
+.ticket .row{display:flex;justify-content:space-between;gap:8px}
+.ticket hr{border:0;border-top:1px dashed #999;margin:8px 0}
+.ticket .tot{font-size:16px;font-weight:700}
+.err{color:#fca5a5;font-size:13px;min-height:18px}
+.empty{color:var(--muted);padding:16px 0}
+.loading main{opacity:.7}
+svg text{fill:var(--muted);font-size:11px;font-family:var(--body)}
+
+@media (max-width:1000px){
+  .k4{grid-template-columns:1fr 1fr}
+  .g2,.g2e{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr}
+  aside.side{position:fixed;left:0;top:0;bottom:0;width:250px;z-index:70;transform:translateX(-100%);transition:transform .2s}
+  aside.side.open{transform:none}
+  .burger{display:inline-block}
+  main{padding:14px}
+}
+@media print{ body *{visibility:hidden} .printable,.printable *{visibility:visible} .printable{position:absolute;left:0;top:0} }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div class="login" id="vLogin">
+  <form class="lcard" id="loginForm">
+    <div class="logo"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M6 17l1.5-6h9L18 17M7 13h10"/><circle cx="8" cy="17" r="1.6"/><circle cx="16" cy="17" r="1.6"/></svg></div>
+      <div><b id="lName">CRM Parquímetros</b><small>Sistema de parqueo</small></div></div>
+    <label class="l">Usuario<input class="f" id="lUser" autocomplete="username" required></label>
+    <label class="l">Contraseña<div style="position:relative"><input class="f" id="lPass" type="password" autocomplete="current-password" required><button type="button" id="lEye" class="btn sm" style="position:absolute;right:6px;top:5px">Ver</button></div></label>
+    <div class="err" id="lErr"></div>
+    <button class="btn p" type="submit" id="lBtn">Iniciar sesión</button>
+    <div class="foot">© <span id="lYear"></span> · Todos los derechos reservados.</div>
+  </form>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="app hide" id="vApp">
+  <aside class="side" id="side">
+    <div class="logo"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M6 17l1.5-6h9L18 17M7 13h10"/><circle cx="8" cy="17" r="1.6"/><circle cx="16" cy="17" r="1.6"/></svg></div>
+      <div><b id="sName">—</b><small>Sistema de parqueo</small></div></div>
+    <div class="ucard"><div class="av" id="uAv">—</div><div><b id="uName">—</b><small id="uRol">—</small></div></div>
+    <nav id="nav"></nav>
+    <div class="sp"></div>
+    <nav><button type="button" id="bClave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Cambiar contraseña</button>
+      <button type="button" id="bSalir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Cerrar sesión</button></nav>
+  </aside>
+  <main>
+    <div class="top">
+      <div style="display:flex;gap:10px;align-items:center"><button class="btn burger" id="burger" type="button" aria-label="Menú">☰</button>
+        <div><h1 id="title">Dashboard</h1><div class="when" id="when">—</div></div></div>
+      <div class="r"><span class="clock" id="clock">--:--</span></div>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<div id="overlay"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ================= CONFIGURACIÓN =================
+   Pega aquí la URL de la implementación de Apps Script (termina en /exec). */
+const API_URL = 'https://script.google.com/macros/s/AKfycbxq-SE0znV4s79-qiJJKsDZi_EO7jAI0fsgR2HegPaAQrrYU8AHYZ5_dQGSVqdJ-3Wg/exec';
+/* ================================================= */
+
+(function(){
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = { get(k){ try{return localStorage.getItem(k);}catch(e){return null;} }, set(k,v){ try{localStorage.setItem(k,v);}catch(e){} }, del(k){ try{localStorage.removeItem(k);}catch(e){} } };
+const KS = "crm-parqueo-sesion";
+let SES = null;
+let VIEW = "dashboard";
+let timer = null;
+
+const TIPO_LBL = {auto:"Auto",moto:"Moto",vip:"VIP",discapacitado:"Discapacitado"};
+const TIPO_COL = {auto:"#3b82f6",moto:"#22c55e",vip:"#a855f7",discapacitado:"#b7791f"};
+const ICON = {
+  dashboard:'<path d="M3 13h8V3H3zM13 21h8v-8h-8zM13 3v6h8V3zM3 21h8v-6H3z"/>',
+  entrada:'<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>',
+  salida:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/>',
+  mapa:'<path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>',
+  clientes:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  reportes:'<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>',
+  caja:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M3 13h18"/>',
+  tarifas:'<path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5"/>',
+  usuarios:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 16 0v1"/>'
+};
+const VISTAS = [
+  {id:"dashboard",t:"Dashboard",roles:["admin","operador","cajero"]},
+  {id:"entrada",t:"Entrada de vehículo",roles:["admin","operador"]},
+  {id:"salida",t:"Salida / Cobro",roles:["admin","operador","cajero"]},
+  {id:"mapa",t:"Mapa de espacios",roles:["admin","operador","cajero"]},
+  {id:"clientes",t:"Clientes",roles:["admin","operador","cajero"]},
+  {id:"reportes",t:"Reportes",roles:["admin","cajero"]},
+  {id:"caja",t:"Cierre de caja",roles:["admin","operador","cajero"]},
+  {id:"tarifas",t:"Tarifas y espacios",roles:["admin"]},
+  {id:"usuarios",t:"Usuarios",roles:["admin"]}
+];
+
+/* ---------- servidor ---------- */
+async function post(body){
+  if(API_URL.indexOf("http")!==0) throw new Error("Falta configurar API_URL en index.html");
+  const r = await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)});
+  const j = await r.json();
+  if(!j.ok){
+    if(/SESION_VENCIDA/.test(j.error)){ cerrarSesion(true); throw new Error("Tu sesión venció. Entra de nuevo."); }
+    throw new Error(j.error);
+  }
+  return j.data;
+}
+const api = (accion, datos)=> post({fn:"api", token:SES.token, accion, datos:datos||{}});
+async function act(accion, datos, okMsg){
+  document.body.classList.add("loading");
+  try{ const r = await api(accion, datos); if(okMsg) toast(okMsg); return r; }
+  catch(e){ toast(e.message,true); throw e; }
+  finally{ document.body.classList.remove("loading"); }
+}
+
+/* ---------- utilidades ---------- */
+const money = n=>"$"+(Number(n)||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const dur = m=>{ m=Math.max(0,Math.round(m)); const d=Math.floor(m/1440), h=Math.floor(m%1440/60), mm=m%60; return (d?d+" d ":"")+(h?h+" h ":"")+mm+" min"; };
+const hora = iso=> iso? new Date(iso).toLocaleTimeString("es-PA",{hour:"numeric",minute:"2-digit"}) : "—";
+const fDT = iso=> iso? new Date(iso).toLocaleString("es-PA",{day:"2-digit",month:"2-digit",year:"numeric",hour:"numeric",minute:"2-digit"}) : "—";
+const fD = s=>{ if(!s) return "—"; const [y,m,d]=String(s).slice(0,10).split("-"); return d+"/"+m+"/"+y; };
+const hoyLocal = ()=>{ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+const tipoPill = t=>`<span class="pill t-${esc(t)}">${esc(TIPO_LBL[t]||t)}</span>`;
+function toast(msg, err){ const t=$("#toast"); t.textContent=msg; t.classList.toggle("err",!!err); t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"), err?4500:2400); }
+const rol = ()=> SES.usuario.rol;
+const puede = id=> VISTAS.find(v=>v.id===id).roles.includes(rol());
+const placaN = s=>String(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+
+/* ---------- gráficas SVG ---------- */
+function areaChart(dias){
+  const W=560,H=200,P=32, max=Math.max(1,...dias.map(d=>d.ingresos));
+  const xs=i=>P+i*(W-P*1.5)/(dias.length-1), ys=v=>H-P-(v/max)*(H-P*1.8);
+  const pts=dias.map((d,i)=>[xs(i),ys(d.ingresos)]);
+  let path="M"+pts[0][0]+","+pts[0][1];
+  for(let i=1;i<pts.length;i++){ const [x0,y0]=pts[i-1],[x1,y1]=pts[i],cx=(x0+x1)/2; path+=` C${cx},${y0} ${cx},${y1} ${x1},${y1}`; }
+  const area=path+` L${pts[pts.length-1][0]},${H-P} L${pts[0][0]},${H-P} Z`;
+  const grid=[0,.5,1].map(f=>`<line x1="${P}" x2="${W-P/2}" y1="${ys(max*f)}" y2="${ys(max*f)}" stroke="#1e2a44"/><text x="${P-6}" y="${ys(max*f)+4}" text-anchor="end">${Math.round(max*f)}</text>`).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Ingresos últimos 7 días"><defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5a623" stop-opacity=".45"/><stop offset="1" stop-color="#f5a623" stop-opacity="0"/></linearGradient></defs>
+    ${grid}<path d="${area}" fill="url(#ga)"/><path d="${path}" fill="none" stroke="#f5a623" stroke-width="2.5"/>
+    ${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="#f5a623"><title>${fD(dias[i].fecha)}: ${money(dias[i].ingresos)}</title></circle><text x="${p[0]}" y="${H-10}" text-anchor="middle">${new Date(dias[i].fecha+"T12:00").toLocaleDateString("es-PA",{weekday:"short"})}</text>`).join("")}</svg>`;
+}
+function barChart(dias){
+  const W=560,H=200,P=32, max=Math.max(1,...dias.map(d=>d.entradas)), bw=(W-P*1.5)/dias.length*.55;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Vehículos ingresados por día">
+    ${[0,.5,1].map(f=>{const y=H-P-f*(H-P*1.8);return `<line x1="${P}" x2="${W-P/2}" y1="${y}" y2="${y}" stroke="#1e2a44"/><text x="${P-6}" y="${y+4}" text-anchor="end">${Math.round(max*f)}</text>`;}).join("")}
+    ${dias.map((d,i)=>{const cx=P+(i+.5)*(W-P*1.5)/dias.length, h=(d.entradas/max)*(H-P*1.8);return `<rect x="${cx-bw/2}" y="${H-P-h}" width="${bw}" height="${h}" rx="4" fill="#3b82f6"><title>${fD(d.fecha)}: ${d.entradas} vehículos</title></rect><text x="${cx}" y="${H-10}" text-anchor="middle">${new Date(d.fecha+"T12:00").toLocaleDateString("es-PA",{weekday:"short"})}</text>`;}).join("")}</svg>`;
+}
+function donut(obj){
+  const ent=Object.entries(obj).filter(e=>e[1]>0), tot=ent.reduce((s,e)=>s+e[1],0);
+  if(!tot) return '<div class="empty">Sin accesos en los últimos 7 días.</div>';
+  let a=-Math.PI/2; const R=70,r=44,C=90;
+  const arcs=ent.map(([k,v])=>{ const a2=a+v/tot*Math.PI*2, big=a2-a>Math.PI?1:0;
+    const p=(ang,rr)=>[C+rr*Math.cos(ang),C+rr*Math.sin(ang)];
+    const [x1,y1]=p(a,R),[x2,y2]=p(a2-0.0001,R),[x3,y3]=p(a2-0.0001,r),[x4,y4]=p(a,r);
+    const d=`M${x1},${y1} A${R},${R} 0 ${big} 1 ${x2},${y2} L${x3},${y3} A${r},${r} 0 ${big} 0 ${x4},${y4} Z`; a=a2;
+    return `<path d="${d}" fill="${TIPO_COL[k]||"#64748b"}"><title>${TIPO_LBL[k]||k}: ${v}</title></path>`; }).join("");
+  return `<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 180 180" width="160" role="img" aria-label="Tipos de vehículos">${arcs}<text x="90" y="88" text-anchor="middle" style="font-size:22px;font-weight:700;fill:#e6ebf5">${tot}</text><text x="90" y="106" text-anchor="middle">accesos</text></svg>
+    <div style="display:grid;gap:6px">${ent.map(([k,v])=>`<div><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${TIPO_COL[k]};margin-right:6px"></span>${TIPO_LBL[k]||k} <b>${v}</b> <span class="muted">(${Math.round(v/tot*100)}%)</span></div>`).join("")}</div></div>`;
+}
+
+/* ---------- vistas ---------- */
+const V = {};
+
+V.dashboard = async ()=>{
+  const d = await api("resumen");
+  const e = d.espacios, occ = e.total? Math.round((e.ocupados)/e.total*100):0;
+  $("#view").innerHTML = `<div class="grid">
+    <div class="k4">
+      <div class="card kpi"><small>Ingresos hoy</small><div class="n a">${money(d.ingresosHoy)}</div><div class="d">${d.cobrosHoy} cobros</div></div>
+      <div class="card kpi"><small>Ingresos del mes</small><div class="n">${money(d.ingresosMes)}</div><div class="d">Acumulado</div></div>
+      <div class="card kpi"><small>Flujo de vehículos</small><div class="n">${d.dentro}</div><div class="d">Parqueados ahora</div></div>
+      <div class="card kpi"><small>Ocupación</small><div class="n">${occ}%</div><div class="d">${e.libres} libres de ${e.total} espacios</div></div>
+    </div>
+    <div class="g2"><div class="card"><h2>Rendimiento financiero · últimos 7 días</h2>${areaChart(d.dias)}</div>
+      <div class="card"><h2>Tipos de vehículos · 7 días</h2>${donut(d.tipos7)}</div></div>
+    <div class="g2"><div class="card"><h2>Afluencia vehicular</h2>${barChart(d.dias)}</div>
+      <div class="card"><h2>Estado en vivo</h2>
+        ${Object.entries(e.porTipo).filter(x=>x[1].total).map(([k,v])=>{ const libres=v.total-v.ocupados-v.mantenimiento;
+          return `<div style="margin-bottom:12px"><div class="lrow" style="border:0;padding:0 0 5px"><span>${TIPO_LBL[k]}</span><span class="muted mono">${libres} libres · ${v.ocupados} ocupados</span></div>
+          <div class="prog"><i style="width:${libres/v.total*100}%;background:var(--green)"></i><i style="width:${v.ocupados/v.total*100}%;background:var(--red)"></i><i style="width:${v.mantenimiento/v.total*100}%;background:#334155"></i></div></div>`;}).join("")}
+        <div class="legend"><span><i style="background:var(--green)"></i>Libre</span><span><i style="background:var(--red)"></i>Ocupado</span><span><i style="background:#334155"></i>Mantenimiento</span></div>
+      </div></div>
+    <div class="card"><h2>Últimas entradas</h2>${d.ultimas.length? d.ultimas.map(t=>`<div class="lrow"><span><b class="mono">${esc(t.placa)}</b> ${tipoPill(t.tipo)}</span><span class="muted">${t.espacio?"Espacio "+esc(t.espacio):""}</span><span class="mono muted">${fDT(t.entrada)}</span><span class="pill ${t.estado==="abierto"?"bad-p":"ok-p"}">${t.estado==="abierto"?"Dentro":"Salió"}</span></div>`).join("") : '<div class="empty">Aún no hay entradas.</div>'}</div>
+  </div>`;
+  clearInterval(timer); timer = setInterval(()=>{ if(VIEW==="dashboard" && !document.hidden && !$("#overlay").innerHTML) V.dashboard().catch(()=>{}); }, 30000);
+};
+
+V.entrada = async ()=>{
+  $("#view").innerHTML = `<div class="g2e"><div class="card"><h2>Registrar entrada</h2>
+    <div id="eBanner" class="banner info">Buscando espacio…</div>
+    <form class="form" id="eForm" style="margin-top:12px" autocomplete="off">
+      <div class="fg"><label class="l">Placa *<input class="f mono" name="placa" required maxlength="12" style="text-transform:uppercase;font-size:18px" autofocus></label>
+        <label class="l">Tipo de vehículo *<select class="f" name="tipo">${Object.entries(TIPO_LBL).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></label></div>
+      <div class="fg"><label class="l">Color<input class="f" name="color"></label><label class="l">Marca<input class="f" name="marca"></label></div>
+      <label class="l">Observaciones<input class="f" name="observaciones" placeholder="Golpe en la puerta, deja llaves…"></label>
+      <button class="btn p" type="submit">Registrar entrada</button>
+    </form></div>
+    <div class="card"><h2>Vehículos dentro</h2><div id="eDentro" class="muted">Cargando…</div></div></div>`;
+  const f=$("#eForm");
+  const previa = async ()=>{
+    try{ const p = await api("previaEntrada",{tipo:f.tipo.value, placa:f.placa.value});
+      const b=$("#eBanner"); if(!b) return;
+      b.className = "banner "+(p.espacio?"ok":"bad");
+      b.innerHTML = p.espacio? `✓ Espacio disponible — se asignará el espacio <b class="mono">${esc(p.espacio)}</b>` : "✕ No hay espacios libres para este tipo";
+      if(p.cliente) b.innerHTML += ` · Cliente: <b>${esc(p.cliente.nombre)}</b> ${p.cliente.activa?'<span class="pill ok-p">Membresía activa</span>':'<span class="pill mut-p">Sin membresía vigente</span>'}`;
+    }catch(e){}
+  };
+  f.tipo.addEventListener("change", previa); f.placa.addEventListener("blur", previa);
+  f.addEventListener("submit", async e=>{
+    e.preventDefault();
+    const datos = Object.fromEntries(new FormData(f));
+    try{ const t = await act("entrada", datos, "Entrada registrada · "+placaN(datos.placa)); f.reset(); f.placa.focus(); previa(); dentro(); mostrarTicket(t,"entrada"); }catch(err){}
+  });
+  const dentro = async ()=>{
+    const r = await api("espacios"); const l = r.espacios.filter(x=>x.placa).sort((a,b)=>String(b.desde).localeCompare(String(a.desde)));
+    const el=$("#eDentro"); if(!el) return;
+    el.innerHTML = l.length? l.slice(0,20).map(x=>`<div class="lrow"><b class="mono">${esc(x.placa)}</b><span class="muted">${esc(x.codigo)}</span><span class="muted mono">${hora(x.desde)}</span></div>`).join("") + (l.length>20?`<div class="muted" style="padding-top:8px">y ${l.length-20} más…</div>`:"") : '<div class="empty">No hay vehículos dentro.</div>';
+  };
+  previa(); dentro();
+};
+
+V.salida = async (q)=>{
+  $("#view").innerHTML = `<div class="g2e"><div class="card"><h2>Registrar salida</h2>
+    <form class="inline" id="sForm" style="display:flex;gap:8px"><input class="f mono" name="q" placeholder="Placa o número de ticket" style="text-transform:uppercase;font-size:16px" required autofocus value="${esc(q||"")}"><button class="btn p">Buscar</button></form>
+    <div id="sRes" style="margin-top:14px"></div></div>
+    <div class="card"><h2>Vehículos dentro</h2><div id="sDentro" class="muted">Cargando…</div></div></div>`;
+  const buscar = async (qq)=>{
+    try{ const r = await act("buscar",{q:qq}); pintar(r); }catch(e){ $("#sRes").innerHTML=""; }
+  };
+  let metodo = "efectivo";
+  const pintar = r=>{
+    const t=r.ticket, c=r.calculo;
+    $("#sRes").innerHTML = `<div class="grid" style="gap:10px">
+      <div class="lrow"><span>Placa</span><b class="mono" style="font-size:18px">${esc(t.placa)}</b></div>
+      <div class="lrow"><span>Ticket</span><span class="mono">#${esc(t.id)} · ${tipoPill(t.tipo)} · Espacio ${esc(t.espacio||"—")}</span></div>
+      <div class="lrow"><span>Hora de entrada</span><span class="mono">${fDT(t.entrada)}</span></div>
+      <div class="lrow"><span>Tiempo transcurrido</span><span class="mono">${dur(c.minutos)}</span></div>
+      <div class="lrow"><span>Tarifa aplicada</span><span class="muted" style="text-align:right">${esc(c.detalle)}</span></div>
+      ${r.cliente?`<div class="banner ${r.cliente.activa?"ok":"info"}">Cliente: <b>${esc(r.cliente.nombre)}</b> · ${esc(r.cliente.membresia)} ${r.cliente.activa?"(vigente hasta "+fD(r.cliente.vence)+")":"(no vigente)"}</div>`:""}
+      <div style="text-align:center;padding:6px 0"><div class="muted">Monto a cobrar</div><div class="big">${money(c.monto)}</div></div>
+      ${c.monto>0?`<div class="methods">${["efectivo","tarjeta","yappy","otro"].map(m=>`<button type="button" class="btn ${m===metodo?"on":""}" data-m="${m}">${m[0].toUpperCase()+m.slice(1)}</button>`).join("")}</div>
+      <div id="efBox" class="${metodo==="efectivo"?"":"hide"} fg"><label class="l">Recibido<input class="f mono" id="recibido" type="number" step="0.01" min="0"></label><div class="l"><span class="muted" style="font-size:12px">Cambio</span><b class="mono" id="cambio" style="font-size:20px;padding-top:6px">$0.00</b></div></div>`:""}
+      <div style="display:flex;gap:8px"><button class="btn p" id="bCobrar" style="flex:1">${c.monto>0?"Cobrar "+money(c.monto):"Registrar salida sin cobro"}</button>${rol()==="admin"?'<button class="btn danger" id="bAnular" type="button">Anular ticket</button>':""}</div>
+    </div>`;
+    document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{ metodo=b.dataset.m; document.querySelectorAll("[data-m]").forEach(x=>x.classList.toggle("on",x===b)); $("#efBox").classList.toggle("hide",metodo!=="efectivo"); });
+    const rec=$("#recibido"); if(rec) rec.oninput=()=>{ const ch=(Number(rec.value)||0)-c.monto; $("#cambio").textContent = ch>=0? money(ch) : "Falta "+money(-ch); $("#cambio").style.color = ch>=0?"":"var(--red)"; };
+    $("#bCobrar").onclick = async ()=>{
+      try{ const res = await act("cobrar",{id:t.id, metodo}, "Salida registrada · "+t.placa); $("#sRes").innerHTML=""; $("#sForm").q.value=""; dentro(); mostrarTicket(res,"salida", rec? Number(rec.value)||0 : 0); }catch(e){}
+    };
+    const an=$("#bAnular"); if(an) an.onclick = async ()=>{ const m=prompt("Motivo para anular el ticket #"+t.id+":"); if(m===null) return; try{ await act("anularTicket",{id:t.id,motivo:m},"Ticket anulado"); $("#sRes").innerHTML=""; dentro(); }catch(e){} };
+  };
+  const dentro = async ()=>{
+    const r = await api("espacios"); const l = r.espacios.filter(x=>x.placa).sort((a,b)=>String(a.desde).localeCompare(String(b.desde)));
+    const el=$("#sDentro"); if(!el) return;
+    el.innerHTML = l.length? `<table class="t"><thead><tr><th>Placa</th><th>Espacio</th><th>Entró</th><th>Tiempo</th></tr></thead><tbody>${l.map(x=>`<tr class="click" data-q="${esc(x.placa)}"><td class="mono"><b>${esc(x.placa)}</b></td><td>${esc(x.codigo)}</td><td class="mono">${hora(x.desde)}</td><td class="mono muted">${dur((Date.now()-new Date(x.desde))/60000)}</td></tr>`).join("")}</tbody></table>` : '<div class="empty">No hay vehículos dentro.</div>';
+    el.querySelectorAll("[data-q]").forEach(tr=>tr.onclick=()=>{ $("#sForm").q.value=tr.dataset.q; buscar(tr.dataset.q); });
+  };
+  $("#sForm").addEventListener("submit", e=>{ e.preventDefault(); buscar(e.target.q.value); });
+  dentro();
+  if(q) buscar(q);
+};
+
+V.mapa = async ()=>{
+  const r = await api("espacios");
+  const zonas = {};
+  r.espacios.forEach(e=>{ (zonas[e.zona]=zonas[e.zona]||[]).push(e); });
+  const libres=r.espacios.filter(e=>e.estado==="libre").length, ocup=r.espacios.filter(e=>e.estado==="ocupado").length;
+  $("#view").innerHTML = `<div class="card grid">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px"><div class="legend"><span><i style="background:var(--green)"></i>Libre (${libres})</span><span><i style="background:var(--red)"></i>Ocupado (${ocup})</span><span><i style="background:#334155"></i>Mantenimiento</span></div>
+      <span class="muted" style="font-size:12px">Toca un espacio ocupado para cobrarlo. Toca uno libre para ponerlo en mantenimiento.</span></div>
+    ${Object.keys(zonas).sort().map(z=>{ const l=zonas[z].sort((a,b)=>a.codigo.localeCompare(b.codigo,undefined,{numeric:true}));
+      return `<div class="zone"><h3>Zona ${esc(z)} · ${tipoPill(l[0].tipo)} · ${l.filter(e=>e.estado==="libre").length} libres de ${l.length}</h3><div class="cells">${l.map(e=>`<div class="cell ${esc(e.estado)}" data-c="${esc(e.codigo)}" title="${esc(e.codigo)} · ${esc(e.estado)}"><b>${esc(e.codigo)}</b>${e.placa?`<span class="mono">${esc(e.placa)}</span>`:`<span class="muted">${e.estado==="mantenimiento"?"Mant.":"Libre"}</span>`}</div>`).join("")}</div></div>`; }).join("") || '<div class="empty">No hay espacios. Créalos en Tarifas y espacios.</div>'}
+  </div>`;
+  document.querySelectorAll(".cell").forEach(c=>c.onclick=async ()=>{
+    const e=r.espacios.find(x=>x.codigo===c.dataset.c);
+    if(e.estado==="ocupado"){ if(puede("salida")) go("salida", e.placa); return; }
+    if(rol()==="cajero") return;
+    if(confirm(e.estado==="mantenimiento"? "¿Habilitar el espacio "+e.codigo+"?" : "¿Poner el espacio "+e.codigo+" en mantenimiento?")){ try{ await act("mantenimiento",{codigo:e.codigo},"Espacio "+e.codigo+" actualizado"); V.mapa(); }catch(er){} }
+  });
+};
+
+V.clientes = async ()=>{
+  $("#view").innerHTML = `<div class="card grid"><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="f" id="cq" placeholder="Buscar por nombre, placa o teléfono" style="flex:1;min-width:200px"><button class="btn p" id="cNew">+ Nuevo cliente</button></div><div id="clist" class="muted">Cargando…</div></div>`;
+  const cargar = async ()=>{
+    const l = await api("clientes",{q:$("#cq").value});
+    const el=$("#clist"); if(!el) return;
+    el.innerHTML = l.length? `<div style="overflow-x:auto"><table class="t"><thead><tr><th>Cliente</th><th>Placa</th><th>Teléfono</th><th>Membresía</th><th class="r">Visitas</th><th class="r">Total</th><th>Última</th></tr></thead><tbody>
+      ${l.map(c=>`<tr class="click" data-id="${esc(c.id)}"><td><b>${esc(c.nombre)}</b></td><td class="mono">${esc(c.placa)||"—"}</td><td class="mono">${esc(c.telefono)||"—"}</td><td>${c.membresia&&c.membresia!=="Ninguna"?`<span class="pill ${c.activa?"ok-p":"bad-p"}">${esc(c.membresia)} · ${c.activa?"vence "+fD(c.vence):"vencida"}</span>`:'<span class="muted">—</span>'}</td><td class="r mono">${c.visitas}</td><td class="r mono">${money(c.gastado)}</td><td class="mono muted">${c.ultima?fD(c.ultima.slice(0,10)):"—"}</td></tr>`).join("")}</tbody></table></div>` : '<div class="empty">No hay clientes todavía.</div>';
+    el.querySelectorAll("[data-id]").forEach(tr=>tr.onclick=()=>fichaCliente(tr.dataset.id, cargar));
+  };
+  $("#cq").oninput=()=>{ clearTimeout(cargar._t); cargar._t=setTimeout(cargar,300); };
+  $("#cNew").onclick=()=>fichaCliente("", cargar);
+  cargar();
+};
+async function fichaCliente(id, despues){
+  let c={nombre:"",telefono:"",correo:"",placa:"",membresia:"Ninguna",vence:"",notas:""}, hist=[];
+  if(id){ try{ const r=await api("cliente",{id}); c=r.cliente; hist=r.historial; }catch(e){ return toast(e.message,true); } }
+  $("#overlay").innerHTML = `<div class="modal" data-close="1" style="z-index:59"></div><aside class="drawer"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">${id?esc(c.nombre):"Nuevo cliente"}</h2><button class="btn sm" data-close="1">✕</button></div>
+    <form class="form" id="cForm">
+      <label class="l">Nombre *<input class="f" name="nombre" value="${esc(c.nombre)}" required></label>
+      <div class="fg"><label class="l">Placa<input class="f mono" name="placa" value="${esc(c.placa)}" style="text-transform:uppercase"></label><label class="l">Teléfono<input class="f" name="telefono" value="${esc(c.telefono)}"></label></div>
+      <label class="l">Correo<input class="f" name="correo" type="email" value="${esc(c.correo)}"></label>
+      <div class="fg"><label class="l">Membresía<select class="f" name="membresia">${["Ninguna","Mensual","Trimestral","Anual","Corporativa"].map(m=>`<option ${m===c.membresia?"selected":""}>${m}</option>`).join("")}</select></label><label class="l">Vence<input class="f" name="vence" type="date" value="${esc(c.vence)}"></label></div>
+      <label class="l">Notas<textarea class="f" name="notas" rows="2">${esc(c.notas)}</textarea></label>
+      <div style="display:flex;gap:8px"><button class="btn p">Guardar</button>${c.telefono?`<a class="btn" target="_blank" rel="noopener" href="https://wa.me/${esc(String(c.telefono).replace(/\D/g,"").replace(/^(\d{8})$/,"507$1"))}">WhatsApp</a>`:""}</div>
+    </form>
+    ${id?`<h2 style="margin:6px 0 0">Visitas (${hist.length})</h2>${hist.length? hist.map(t=>`<div class="lrow"><span class="mono">${fDT(t.entrada)}</span><span class="muted">${t.minutos?dur(t.minutos):t.estado}</span><b class="mono">${money(t.monto)}</b></div>`).join("") : '<div class="empty">Sin visitas registradas.</div>'}`:""}
+  </aside>`;
+  $("#cForm").onsubmit = async e=>{ e.preventDefault(); const d=Object.fromEntries(new FormData(e.target)); d.id=id; try{ await act("guardarCliente",d,"Cliente guardado"); $("#overlay").innerHTML=""; despues&&despues(); }catch(er){} };
+}
+
+V.reportes = async ()=>{
+  const h=hoyLocal(), ini=h.slice(0,8)+"01";
+  $("#view").innerHTML = `<div class="grid"><div class="card"><form id="rForm" style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+      <label class="l">Desde<input class="f" type="date" name="desde" value="${ini}"></label><label class="l">Hasta<input class="f" type="date" name="hasta" value="${h}"></label>
+      <button class="btn p">Generar</button><button class="btn" type="button" id="rCsv" disabled>Exportar Excel (CSV)</button></form></div><div id="rOut"></div></div>`;
+  let ult=null;
+  const gen = async ()=>{
+    const f=$("#rForm"); try{ ult = await act("reporte",{desde:f.desde.value,hasta:f.hasta.value}); }catch(e){ return; }
+    const r=ult; $("#rCsv").disabled=!r.tickets.length;
+    const tabla=(o,lbl)=>`<table class="t"><thead><tr><th>${lbl}</th><th class="r">Cobros</th><th class="r">Total</th></tr></thead><tbody>${Object.entries(o).map(([k,v])=>`<tr><td>${esc(TIPO_LBL[k]||k)}</td><td class="r mono">${v.cantidad}</td><td class="r mono">${money(v.total)}</td></tr>`).join("")||'<tr><td colspan="3" class="muted">—</td></tr>'}</tbody></table>`;
+    $("#rOut").innerHTML = `<div class="grid"><div class="k4">
+      <div class="card kpi"><small>Total cobrado</small><div class="n a">${money(r.total)}</div><div class="d">${fD(r.desde)} a ${fD(r.hasta)}</div></div>
+      <div class="card kpi"><small>Salidas</small><div class="n">${r.cantidad}</div></div>
+      <div class="card kpi"><small>Ticket promedio</small><div class="n">${money(r.cantidad?r.total/r.cantidad:0)}</div></div>
+      <div class="card kpi"><small>Estadía promedio</small><div class="n">${dur(r.promedioMin)}</div></div></div>
+      <div class="k4" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))"><div class="card"><h2>Por método de pago</h2>${tabla(r.porMetodo,"Método")}</div><div class="card"><h2>Por tipo de vehículo</h2>${tabla(r.porTipo,"Tipo")}</div><div class="card"><h2>Por cajero</h2>${tabla(r.porCajero,"Usuario")}</div></div>
+      <div class="card"><h2>Detalle (${r.tickets.length})</h2><div style="overflow-x:auto"><table class="t"><thead><tr><th>Ticket</th><th>Placa</th><th>Tipo</th><th>Entrada</th><th>Salida</th><th>Tiempo</th><th>Método</th><th>Cajero</th><th class="r">Monto</th></tr></thead><tbody>
+      ${r.tickets.slice(0,500).map(t=>`<tr><td class="mono">#${esc(t.id)}</td><td class="mono"><b>${esc(t.placa)}</b></td><td>${tipoPill(t.tipo)}</td><td class="mono">${fDT(t.entrada)}</td><td class="mono">${fDT(t.salida)}</td><td class="mono muted">${dur(t.minutos)}</td><td>${esc(t.metodo)}</td><td>${esc(t.cajero)}</td><td class="r mono">${money(t.monto)}</td></tr>`).join("")}</tbody></table></div>${r.tickets.length>500?'<div class="muted">Mostrando 500. Exporta para ver todos.</div>':""}</div></div>`;
+  };
+  $("#rForm").onsubmit=e=>{ e.preventDefault(); gen(); };
+  $("#rCsv").onclick=()=>{
+    if(!ult) return;
+    const cols=["id","placa","tipo","color","marca","espacio","entrada","salida","minutos","monto","metodo","operador","cajero"];
+    const q=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
+    const csv="﻿"+cols.join(";")+"\n"+ult.tickets.map(t=>cols.map(c=>c==="entrada"||c==="salida"?q(fDT(t[c])):c==="monto"?q(String(t[c]).replace(".",",")):q(t[c])).join(";")).join("\n");
+    const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); a.download=`reporte_${ult.desde}_a_${ult.hasta}.csv`; a.click();
+  };
+  gen();
+};
+
+V.caja = async ()=>{
+  const c = await api("caja");
+  $("#view").innerHTML = `<div class="g2e"><div class="card grid"><h2 style="margin:0">Mi caja pendiente de cierre</h2>
+      ${c.tickets? `<div class="muted">Desde ${fDT(c.desde)} · ${c.tickets} cobros</div>
+      <div class="lrow"><span>Efectivo</span><b class="mono">${money(c.efectivo)}</b></div><div class="lrow"><span>Tarjeta</span><b class="mono">${money(c.tarjeta)}</b></div><div class="lrow"><span>Yappy / otros</span><b class="mono">${money(c.otros)}</b></div>
+      <div style="text-align:center"><div class="muted">Total</div><div class="big">${money(c.total)}</div></div>
+      <label class="l">Nota del cierre (opcional)<input class="f" id="cjNota" placeholder="Turno, diferencias, observaciones"></label>
+      <button class="btn p" id="cjBtn">Cerrar caja</button>` : '<div class="empty">No tienes cobros pendientes de cierre.</div>'}
+    </div>
+    <div class="card"><h2>Cierres anteriores</h2>${c.cierres.length? `<table class="t"><thead><tr><th>Fecha</th><th>Usuario</th><th class="r">Cobros</th><th class="r">Total</th></tr></thead><tbody>${c.cierres.map(x=>`<tr class="click" data-id="${esc(x.id)}"><td class="mono">${fDT(x.fecha)}</td><td>${esc(x.usuario)}</td><td class="r mono">${x.tickets}</td><td class="r mono">${money(x.total)}</td></tr>`).join("")}</tbody></table>` : '<div class="empty">Aún no hay cierres.</div>'}</div></div>`;
+  const b=$("#cjBtn"); if(b) b.onclick = async ()=>{ if(!confirm("¿Cerrar caja por "+money(c.total)+"?")) return; try{ const r = await act("cerrarCaja",{nota:$("#cjNota").value},"Caja cerrada"); mostrarCierre(Object.assign({fecha:new Date().toISOString(),usuario:SES.usuario.usuario,nota:$("#cjNota").value},r)); V.caja(); }catch(e){} };
+  document.querySelectorAll("[data-id]").forEach(tr=>tr.onclick=()=>mostrarCierre(c.cierres.find(x=>x.id===tr.dataset.id)));
+};
+
+V.tarifas = async ()=>{
+  const r = await api("espacios");
+  $("#view").innerHTML = `<div class="grid"><div class="card"><h2>Tarifas por tipo de vehículo</h2><div style="overflow-x:auto"><table class="t"><thead><tr><th>Tipo</th><th>Precio por hora</th><th>Cobrar cada (min)</th><th>Gracia (min)</th><th>Tope por día</th><th></th></tr></thead><tbody>
+    ${["auto","moto","vip","discapacitado"].map(k=>{ const t=r.tarifas.find(x=>x.tipo===k)||{precioHora:0,fraccionMin:60,graciaMin:0,maxDia:0};
+      return `<tr data-t="${k}"><td>${tipoPill(k)}</td><td><input class="f mono" name="precioHora" type="number" step="0.01" min="0" value="${t.precioHora}"></td><td><input class="f mono" name="fraccionMin" type="number" min="1" value="${t.fraccionMin}"></td><td><input class="f mono" name="graciaMin" type="number" min="0" value="${t.graciaMin}"></td><td><input class="f mono" name="maxDia" type="number" step="0.01" min="0" value="${t.maxDia}"></td><td><button class="btn p sm" data-save="${k}">Guardar</button></td></tr>`; }).join("")}
+    </tbody></table></div><div class="muted" style="margin-top:8px;font-size:12px">Ejemplo: $1.50 por hora cobrando cada 15 min = $0.38 por fracción. Si sale antes de la gracia no paga. "Tope por día" es lo máximo que paga en 24 h (0 = sin tope).</div></div>
+    <div class="g2e"><div class="card"><h2>Agregar espacios</h2><form class="form" id="espForm"><div class="fg"><label class="l">Zona<input class="f" name="zona" required maxlength="3" placeholder="E"></label><label class="l">Tipo<select class="f" name="tipo">${Object.entries(TIPO_LBL).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></label></div>
+      <div class="fg"><label class="l">Prefijo del código<input class="f" name="prefijo" maxlength="3" placeholder="Igual a la zona"></label><label class="l">Desde #<input class="f" name="desde" type="number" min="1" value="1"></label><label class="l">Hasta #<input class="f" name="hasta" type="number" min="1" value="10"></label></div>
+      <button class="btn p">Crear espacios</button></form></div>
+      <div class="card"><h2>Borrar un espacio</h2><form class="form" id="espDel"><label class="l">Código<input class="f mono" name="codigo" placeholder="A-01" required></label><button class="btn danger">Borrar</button></form>
+      <div class="muted" style="margin-top:10px;font-size:12px">Total de espacios: ${r.espacios.length}. Solo se borran espacios que no estén ocupados.</div></div></div></div>`;
+  document.querySelectorAll("[data-save]").forEach(b=>b.onclick=async ()=>{ const tr=b.closest("tr"); const d={tipo:tr.dataset.t}; tr.querySelectorAll("input").forEach(i=>d[i.name]=i.value); try{ await act("guardarTarifa",d,"Tarifa de "+TIPO_LBL[d.tipo]+" guardada"); }catch(e){} });
+  $("#espForm").onsubmit=async e=>{ e.preventDefault(); const d=Object.fromEntries(new FormData(e.target)); if(!d.prefijo) d.prefijo=d.zona; try{ const r2=await act("agregarEspacios",d); toast(r2.creados+" espacios creados"); V.tarifas(); }catch(er){} };
+  $("#espDel").onsubmit=async e=>{ e.preventDefault(); const c=new FormData(e.target).get("codigo").toUpperCase(); if(!confirm("¿Borrar el espacio "+c+"?")) return; try{ await act("borrarEspacio",{codigo:c},"Espacio "+c+" borrado"); V.tarifas(); }catch(er){} };
+};
+
+V.usuarios = async ()=>{
+  const us = await api("usuarios");
+  $("#view").innerHTML = `<div class="grid"><div class="card"><h2>Usuarios</h2><div style="overflow-x:auto"><table class="t"><thead><tr><th>Usuario</th><th>Nombre</th><th>Rol</th><th>Estado</th><th>Último acceso</th><th></th></tr></thead><tbody>
+    ${us.map(u=>`<tr data-u="${esc(u.usuario)}"><td class="mono">${esc(u.usuario)}</td><td>${esc(u.nombre)}</td><td style="text-transform:capitalize">${esc(u.rol)}</td><td><span class="pill ${u.activo==="SI"?"ok-p":"mut-p"}">${u.activo==="SI"?"Activo":"Inactivo"}</span></td><td class="mono muted">${fDT(u.ultimoAcceso)}</td>
+      <td style="white-space:nowrap"><button class="btn sm" data-a="reset">Nueva contraseña</button> ${u.usuario===SES.usuario.usuario?"":`<button class="btn sm ${u.activo==="SI"?"danger":""}" data-a="act" data-on="${u.activo==="SI"?"0":"1"}">${u.activo==="SI"?"Desactivar":"Activar"}</button>`}</td></tr>`).join("")}</tbody></table></div></div>
+    <div class="card"><h2>Crear usuario</h2><form id="uForm" style="display:flex;gap:10px;flex-wrap:wrap;align-items:end"><label class="l">Usuario<input class="f" name="usuario" required placeholder="cajero1"></label><label class="l">Nombre<input class="f" name="nombre"></label><label class="l">Rol<select class="f" name="rol"><option value="operador">Operador (entradas y salidas)</option><option value="cajero">Cajero (cobros, caja y reportes)</option><option value="admin">Administrador (todo)</option></select></label><button class="btn p">Crear</button></form></div></div>`;
+  $("#uForm").onsubmit=async e=>{ e.preventDefault(); try{ const r=await act("crearUsuario",Object.fromEntries(new FormData(e.target))); mostrarClave(r); V.usuarios(); }catch(er){} };
+  document.querySelectorAll("[data-a]").forEach(b=>b.onclick=async ()=>{ const u=b.closest("[data-u]").dataset.u;
+    if(b.dataset.a==="reset"){ if(confirm("¿Generar contraseña temporal nueva para "+u+"?")) try{ mostrarClave(await act("resetClave",{usuario:u})); }catch(e){} }
+    else { try{ await act("activarUsuario",{usuario:u,activo:b.dataset.on==="1"},"Usuario actualizado"); V.usuarios(); }catch(e){} } });
+};
+
+/* ---------- comprobantes ---------- */
+function mostrarTicket(t, tipo, recibido){
+  const nombre = esc(t.nombre || SES.nombre || "Parqueo");
+  const html = `<div class="ticket printable"><h3>${nombre}</h3><div style="text-align:center">${tipo==="entrada"?"TICKET DE ENTRADA":"COMPROBANTE DE SALIDA"}</div><hr>
+    <div class="row"><span>Ticket</span><b>#${esc(t.id)}</b></div><div class="row"><span>Placa</span><b>${esc(t.placa)}</b></div>
+    <div class="row"><span>Tipo</span><span>${esc(TIPO_LBL[t.tipo]||t.tipo)}</span></div><div class="row"><span>Espacio</span><span>${esc(t.espacio||"—")}</span></div>
+    <div class="row"><span>Entrada</span><span>${fDT(t.entrada)}</span></div>
+    ${tipo==="salida"?`<div class="row"><span>Salida</span><span>${fDT(t.salida)}</span></div><div class="row"><span>Tiempo</span><span>${dur(t.minutos)}</span></div><hr>
+      <div class="row tot"><span>TOTAL</span><span>${money(t.monto)}</span></div><div class="row"><span>Pago</span><span>${esc(t.metodo)}</span></div>
+      ${recibido&&t.metodo==="efectivo"?`<div class="row"><span>Recibido</span><span>${money(recibido)}</span></div><div class="row"><span>Cambio</span><span>${money(recibido-t.monto)}</span></div>`:""}`
+      : `${t.cliente?`<div class="row"><span>Cliente</span><span>${esc(t.cliente.nombre)}</span></div>`:""}<hr><div style="text-align:center">Conserve este ticket</div>`}
+    <hr><div style="text-align:center;font-size:10px">${new Date().toLocaleString("es-PA")}</div></div>`;
+  $("#overlay").innerHTML = `<div class="modal"><div class="card grid" style="width:auto">${html}<div style="display:flex;gap:8px;justify-content:center"><button class="btn p" onclick="window.print()">Imprimir</button><button class="btn" data-close="1">Cerrar</button></div></div></div>`;
+}
+function mostrarCierre(c){
+  $("#overlay").innerHTML = `<div class="modal"><div class="card grid" style="width:auto"><div class="ticket printable"><h3>CIERRE DE CAJA</h3><div style="text-align:center">${esc(c.id)}</div><hr>
+    <div class="row"><span>Fecha</span><span>${fDT(c.fecha)}</span></div><div class="row"><span>Usuario</span><span>${esc(c.usuario)}</span></div><div class="row"><span>Cobros</span><span>${c.tickets}</span></div><hr>
+    <div class="row"><span>Efectivo</span><span>${money(c.efectivo)}</span></div><div class="row"><span>Tarjeta</span><span>${money(c.tarjeta)}</span></div><div class="row"><span>Yappy/otros</span><span>${money(c.otros)}</span></div><hr>
+    <div class="row tot"><span>TOTAL</span><span>${money(c.total)}</span></div>${c.nota?`<hr><div>${esc(c.nota)}</div>`:""}<hr><div>Firma: ____________________</div></div>
+    <div style="display:flex;gap:8px;justify-content:center"><button class="btn p" onclick="window.print()">Imprimir</button><button class="btn" data-close="1">Cerrar</button></div></div></div>`;
+}
+function mostrarClave(r){
+  $("#overlay").innerHTML = `<div class="modal"><div class="card grid"><h2 style="margin:0">Contraseña temporal</h2><div>Usuario: <b class="mono">${esc(r.usuario)}</b></div><div>Contraseña: <b class="mono" style="font-size:18px;color:var(--amber)">${esc(r.clave)}</b></div>
+    <div class="muted">Cópiala y entrégala a la persona. Se le pedirá cambiarla al entrar. No se vuelve a mostrar.</div><button class="btn p" data-close="1">Listo</button></div></div>`;
+}
+function pedirCambioClave(obligatorio){
+  $("#overlay").innerHTML = `<div class="modal" ${obligatorio?"":'data-close="1"'}><form class="card grid" id="claveForm"><h2 style="margin:0">${obligatorio?"Crea tu contraseña":"Cambiar contraseña"}</h2>
+    ${obligatorio?'<div class="muted">Estás usando una contraseña temporal. Crea una nueva para continuar.</div>':""}
+    <label class="l">Contraseña actual<input class="f" name="actual" type="password" required autocomplete="current-password"></label>
+    <label class="l">Nueva contraseña (mínimo 8)<input class="f" name="nueva" type="password" minlength="8" required autocomplete="new-password"></label>
+    <label class="l">Repite la nueva<input class="f" name="nueva2" type="password" minlength="8" required autocomplete="new-password"></label>
+    <div class="err" id="cErr"></div><div style="display:flex;gap:8px"><button class="btn p">Guardar</button><button class="btn" type="button" ${obligatorio?'id="cSalir">Salir':'data-close="1">Cancelar'}</button></div></form></div>`;
+  if(obligatorio) $("#cSalir").onclick=()=>cerrarSesion();
+  $("#claveForm").onsubmit = async e=>{ e.preventDefault(); const f=Object.fromEntries(new FormData(e.target));
+    if(f.nueva!==f.nueva2) return $("#cErr").textContent="Las contraseñas nuevas no coinciden.";
+    try{ await post({fn:"api",token:SES.token,accion:"cambiarClave",datos:{actual:f.actual,nueva:f.nueva}}); SES.usuario.cambiar=false; store.set(KS,JSON.stringify(SES)); $("#overlay").innerHTML=""; toast("Contraseña actualizada"); go(VIEW); }
+    catch(err){ $("#cErr").textContent=err.message; } };
+}
+
+/* ---------- navegación ---------- */
+function pintarNav(){
+  $("#nav").innerHTML = VISTAS.filter(v=>v.roles.includes(rol())).map(v=>`<button type="button" data-v="${v.id}" class="${v.id===VIEW?"on":""}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[v.id]}</svg>${v.t}</button>`).join("");
+  $("#nav").querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{ go(b.dataset.v); $("#side").classList.remove("open"); });
+}
+async function go(v, arg){
+  if(!puede(v)) v="dashboard";
+  VIEW=v; clearInterval(timer); pintarNav();
+  $("#title").textContent = VISTAS.find(x=>x.id===v).t;
+  $("#view").innerHTML = '<div class="muted">Cargando…</div>';
+  try{ await V[v](arg); }catch(e){ $("#view").innerHTML = `<div class="banner bad">${esc(e.message)}</div>`; }
+}
+
+/* ---------- sesión ---------- */
+function iniciar(){
+  $("#vLogin").classList.add("hide"); $("#vApp").classList.remove("hide");
+  const u=SES.usuario; $("#uName").textContent=u.nombre; $("#uRol").textContent=u.rol; $("#uAv").textContent=u.nombre.split(" ").map(p=>p[0]).slice(0,2).join("").toUpperCase();
+  $("#sName").textContent = SES.nombre || "Parqueo";
+  if(u.cambiar){ pintarNav(); return pedirCambioClave(true); }
+  go(VIEW);
+}
+function cerrarSesion(silencio){
+  if(SES && !silencio) post({fn:"salir",token:SES.token}).catch(()=>{});
+  SES=null; store.del(KS); clearInterval(timer); $("#overlay").innerHTML="";
+  $("#vApp").classList.add("hide"); $("#vLogin").classList.remove("hide");
+}
+$("#loginForm").onsubmit = async e=>{
+  e.preventDefault(); $("#lErr").textContent=""; $("#lBtn").disabled=true;
+  try{ SES = await post({fn:"login",usuario:$("#lUser").value,clave:$("#lPass").value}); store.set(KS,JSON.stringify(SES)); $("#lPass").value=""; VIEW="dashboard"; iniciar(); }
+  catch(err){ $("#lErr").textContent=err.message; } finally{ $("#lBtn").disabled=false; }
+};
+$("#lEye").onclick=()=>{ const p=$("#lPass"); p.type=p.type==="password"?"text":"password"; $("#lEye").textContent=p.type==="password"?"Ver":"Ocultar"; };
+$("#bSalir").onclick=()=>cerrarSesion();
+$("#bClave").onclick=()=>pedirCambioClave(false);
+$("#burger").onclick=()=>$("#side").classList.toggle("open");
+$("#overlay").addEventListener("click",e=>{ if(e.target.dataset.close || e.target.closest("button[data-close]")) $("#overlay").innerHTML=""; });
+$("#lYear").textContent = new Date().getFullYear();
+
+function reloj(){ const d=new Date(); $("#clock").textContent=d.toLocaleTimeString("es-PA",{hour:"numeric",minute:"2-digit",second:"2-digit"}); const w=d.toLocaleDateString("es-PA",{weekday:"long",day:"numeric",month:"long",year:"numeric"}); $("#when").textContent=w.charAt(0).toUpperCase()+w.slice(1); }
+reloj(); setInterval(reloj,1000);
+
+try{ SES = JSON.parse(store.get(KS)); }catch(e){ SES=null; }
+if(SES && SES.token) iniciar();
+})();
+</script>
+</body>
+</html>
